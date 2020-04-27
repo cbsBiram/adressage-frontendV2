@@ -6,8 +6,8 @@ Assurez-vous que npm est installé sur votre machine.
 Cloner le projet
 
 ```sh
- git clone https://github.com/cbsBiram/adressage-frontend.git
- cd adressage-frontend
+ git clone https://github.com/cbsBiram/adressage-frontendV2.git
+ cd adressage-frontendV2
 ```
 
 Installer les dépendances

@@ -1,13 +1,13 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, Platform } from "react-native";
+
+import colors from "../config/colors";
 
 export default class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
-
-  componentDidMount() {}
 
   render() {
     return (
@@ -26,25 +26,26 @@ const styles = StyleSheet.create({
   headText: {
     textAlign: "left",
     textAlignVertical: "center",
-    color: "#FF8C00",
+    color: colors.primary,
     marginLeft: 10,
     fontSize: 45,
     fontStyle: "italic",
-    flex: 4
+    flex: 4,
+    fontFamily: Platform.OS === "android" ? "Roboto" : "Avenir",
   },
   headStyle: {
     paddingTop: 20,
     paddingBottom: 10,
     paddingRight: 10,
-    backgroundColor: "#ffffff",
+    backgroundColor: colors.white,
     flex: 1,
     flexDirection: "row",
     borderBottomWidth: 2,
-    borderColor: "#000000"
+    borderColor: colors.black,
   },
   logoStyle: {
     flex: 1.5,
     width: undefined,
-    height: undefined
-  }
+    height: undefined,
+  },
 });

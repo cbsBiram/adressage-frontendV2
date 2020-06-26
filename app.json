@@ -1,7 +1,7 @@
 {
     "expo": {
-        "name": "MyHaliV2",
-        "slug": "myhaliv2-app",
+        "name": "MyHaliBusiness",
+        "slug": "myhalibusiness-app",
         "platforms": ["ios", "android", "web"],
         "version": "1.0.0",
         "orientation": "default",
@@ -20,7 +20,7 @@
         },
         "android": {
             "package": "com.origynslabs.myhali",
-            "versionCode": 2
+            "versionCode": 1
         }
     }
 }

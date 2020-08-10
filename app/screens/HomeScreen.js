@@ -1,115 +1,116 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
   ImageBackground,
   TextInput,
-  ActivityIndicator,
+  Modal,
+  Button,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-simple-toast";
 
-import Header from "../sections/Header";
+import addressesApi from "./../api/adress";
+import AppButton from "../components/AppButton";
 import colors from "../config/colors";
-import { getCodeInfos } from "../services/addressServices";
+import Header from "../sections/Header";
+import Playlist from "../components/Playlist";
+import routes from "../navigation/routes";
+import useLocation from "../hooks/useLocation";
+import UploadScreen from "./UploadScreen";
+import AppActivityIndicator from "../components/AppActivityIndicator";
 
-class HomeScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      positionCode: { longitude: null, latitude: null },
-      where: { lat: null, lng: null },
-    };
-  }
+export default function HomeScreen() {
+  const currentPosition = useLocation();
+  navigation = useNavigation();
 
-  componentDidMount() {
-    let geoOptions = {
-      enableHighAccuracy: true,
-      timeOut: 10000,
-      maximumAge: 5000,
-    };
-    this.setState({ ready: false });
-    navigator.geolocation.getCurrentPosition(
-      this.geoSuccess,
-      this.geoFailure,
-      geoOptions
-    );
-  }
-
-  geoSuccess = (position) => {
-    this.setState({
-      ready: true,
-      where: { lat: position.coords.latitude, lng: position.coords.longitude },
-    });
-  };
-
-  geoFailure = (err) => {
-    this.setState({ error: err.message });
-  };
+  const [modalVisible, setModalVisible] = useState(false);
+  const [where, setWhere] = useState();
+  const [audioUri, setAudioUri] = useState("");
+  const [progress, setProgress] = useState(0);
+  const [uploadVisible, setUploadVisible] = useState(0);
 
   // code = DAK-PA-HGY-1093B
-
-  updateSearch = (query) => {
-    getCodeInfos(query).then(({ data }) => {
-      if (data.longitude && data.latitude) {
-        this.setState({
-          positionCode: { longitude: data.longitude, latitude: data.latitude },
-        });
-
-        const { where } = this.state;
-        const { navigation } = this.props;
-
-        navigation.navigate("MapScreen", {
-          userPosition: { userLatitude: where.lat, userLongitude: where.lng },
-          codePosition: {
-            codeLatitude: data.latitude,
-            codeLongitude: data.longitude,
-          },
-        });
-      } else
-        Toast.show(
-          "Ce code n'est pas répertorié dans la base de données !",
-          Toast.LONG
-        );
-    });
+  const updateSearch = async (code) => {
+    const response = await addressesApi.getCodeInfos(code, (progress) =>
+      setProgress(progress)
+    );
+    if (!response.ok) {
+      Toast.show(
+        "Ce code n'est pas répertorié dans la base de donnée!",
+        Toast.LONG
+      );
+      return;
+    }
+    const { latitude, longitude, uri } = response.data;
+    setWhere({ latitude: latitude, longitude: longitude });
+    if (uri) setAudioUri(uri);
+    console.log("Audio URI:", audioUri);
   };
 
-  render() {
-    let { where } = this.state;
+  const goToMap = () => {
+    if (where)
+      navigation.navigate(routes.MAP, {
+        currentPosition,
+        where,
+      });
+    else alert("Un problème est survenu...");
+  };
 
-    if (!where.lat || !where.lng)
-      return (
-        <ActivityIndicator size="large" color="#35605a" style={{ flex: 2 }} />
-      );
+  if (!currentPosition) return <AppActivityIndicator visible={true} />;
 
-    return (
-      <View style={styles.container}>
-        <Header />
+  return (
+    <View style={styles.container}>
+      <UploadScreen
+        onDone={() => setUploadVisible(false)}
+        progress={progress}
+        visible={uploadVisible}
+      />
+      <Header />
 
-        <ImageBackground
-          style={styles.image}
-          source={require("../../assets/road2.webp")}
+      <ImageBackground
+        style={styles.image}
+        source={require("./../assets/road2.webp")}
+      >
+        <Animatable.View
+          animation="slideInRight"
+          duration={500}
+          style={styles.searchContainer}
         >
-          <Animatable.View
-            animation="slideInRight"
-            duration={500}
-            style={styles.searchContainer}
-          >
-            <Ionicons name="ios-search" size={24} color="black" />
-            <TextInput
-              clearButtonMode="while-editing"
-              placeholder="Search"
-              returnKeyType="search"
-              onSubmitEditing={(e) => this.updateSearch(e.nativeEvent.text)}
-              style={styles.searchInput}
-              autoCapitalize="characters"
+          <Ionicons name="ios-search" size={24} color="black" />
+          <TextInput
+            clearButtonMode="while-editing"
+            placeholder="Search"
+            returnKeyType="search"
+            onSubmitEditing={(e) => updateSearch(e.nativeEvent.text)}
+            style={styles.searchInput}
+            autoCapitalize="characters"
+          />
+        </Animatable.View>
+        {audioUri !== "" && (
+          <>
+            <AppButton
+              icon="map"
+              title="Rechercher"
+              onPress={() => goToMap()}
             />
-          </Animatable.View>
-        </ImageBackground>
-      </View>
-    );
-  }
+            <AppButton
+              icon="voice"
+              title="Écouter vocal"
+              onPress={() => setModalVisible(true)}
+            />
+          </>
+        )}
+      </ImageBackground>
+
+      <Modal visible={modalVisible} animationType="slide">
+        <Button title="Close" onPress={() => setModalVisible(false)} />
+        <Playlist audioUri={audioUri} />
+      </Modal>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -139,5 +140,3 @@ const styles = StyleSheet.create({
     marginLeft: 15,
   },
 });
-
-export default HomeScreen;

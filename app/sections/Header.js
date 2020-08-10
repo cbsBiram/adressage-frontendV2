@@ -14,7 +14,7 @@ export default class Header extends React.Component {
       <View style={styles.headStyle}>
         <Image
           style={styles.logoStyle}
-          source={require("../../assets/logo.jpeg")}
+          source={require("./../assets/logo.jpeg")}
         />
         <Text style={styles.headText}>MyHali</Text>
       </View>

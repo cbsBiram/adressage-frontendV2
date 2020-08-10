@@ -2,33 +2,36 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
 
-function MapScreen(props) {
-  let {
-    userPosition: { userLatitude, userLongitude },
-    codePosition: { codeLatitude, codeLongitude },
-  } = props.route.params;
+function MapScreen({ route }) {
+  let { currentPosition, where } = route.params;
 
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: userLatitude,
-          longitude: userLongitude,
+          latitude: currentPosition.latitude,
+          longitude: currentPosition.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
         showsUserLocation={true}
         followUserLocation={true}
-        minZoomLevel={12}
+        minZoomLevel={10}
       >
         <MapView.Marker
           title="Your Position"
-          coordinate={{ latitude: userLatitude, longitude: userLongitude }}
+          coordinate={{
+            latitude: currentPosition.latitude,
+            longitude: currentPosition.longitude,
+          }}
         />
         <MapView.Marker
           title="Position related to the code"
-          coordinate={{ latitude: codeLatitude, longitude: codeLongitude }}
+          coordinate={{
+            latitude: where.latitude,
+            longitude: where.longitude,
+          }}
         />
       </MapView>
     </View>

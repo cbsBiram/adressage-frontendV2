@@ -3,7 +3,7 @@
         "name": "MyHaliBusiness",
         "slug": "myhalibusiness-app",
         "platforms": ["ios", "android", "web"],
-        "version": "1.0.0",
+        "version": "1.0.1",
         "orientation": "default",
         "icon": "./app/assets/icon.png",
         "splash": {
@@ -20,7 +20,12 @@
         },
         "android": {
             "package": "com.origynslabs.myhalibusiness",
-            "versionCode": 1
+            "config": {
+                "googleMaps": {
+                    "apiKey": "AIzaSyAjarKpWsj8HV24sJd5wRgH5pr8VD3UYFA"
+                }
+            },
+            "versionCode": 2
         },
         "description": "A platform for searching a specific location previously coded with Myhali.",
         "extra": {

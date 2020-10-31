@@ -1,17 +1,19 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import MapView from "react-native-maps";
+import MapViewDirections from "react-native-maps-directions";
 
 function MapScreen({ route }) {
-  let { currentPosition, where } = route.params;
+  let { origin, destination } = route.params;
+  const GOOGLE_MAPS_APIKEY = "AIzaSyBePd8ENZ2D-7oqEHZtiSzg1C6LThmjifs";
 
   return (
     <View style={styles.container}>
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: currentPosition.latitude,
-          longitude: currentPosition.longitude,
+          latitude: origin.latitude,
+          longitude: origin.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -20,17 +22,24 @@ function MapScreen({ route }) {
         minZoomLevel={10}
       >
         <MapView.Marker
-          title="Your Position"
+          title="Votre Position"
           coordinate={{
-            latitude: currentPosition.latitude,
-            longitude: currentPosition.longitude,
+            latitude: origin.latitude,
+            longitude: origin.longitude,
           }}
         />
+        <MapViewDirections
+          origin={origin}
+          destination={destination}
+          apikey={GOOGLE_MAPS_APIKEY}
+          strokeWidth={3}
+          strokeColor="hotpink"
+        />
         <MapView.Marker
-          title="Position related to the code"
+          title="Destination"
           coordinate={{
-            latitude: where.latitude,
-            longitude: where.longitude,
+            latitude: destination.latitude,
+            longitude: destination.longitude,
           }}
         />
       </MapView>

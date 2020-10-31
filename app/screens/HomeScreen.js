@@ -23,12 +23,12 @@ import useLocation from "../hooks/useLocation";
 import useApi from "../hooks/useApi";
 
 export default function HomeScreen() {
-  const currentPosition = useLocation();
+  const origin = useLocation();
   const codeInfoApi = useApi(addressesApi.getCodeInfos);
   navigation = useNavigation();
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [where, setWhere] = useState();
+  const [destination, setDestination] = useState();
   const [audioUri, setAudioUri] = useState("");
 
   // code = DAK-PA-HGY-1093B
@@ -42,20 +42,20 @@ export default function HomeScreen() {
       return;
     }
     const { latitude, longitude, uri } = response.data;
-    setWhere({ latitude: latitude, longitude: longitude });
+    setDestination({ latitude: latitude, longitude: longitude });
     if (uri) setAudioUri(uri);
   };
 
   const goToMap = () => {
-    if (where)
+    if (destination)
       navigation.navigate(routes.MAP, {
-        currentPosition,
-        where,
+        origin,
+        destination,
       });
     else alert("Un problème est survenu...");
   };
 
-  if (!currentPosition) return <AppActivityIndicator visible={true} />;
+  if (!origin) return <AppActivityIndicator visible={true} />;
 
   return (
     <>
@@ -81,7 +81,7 @@ export default function HomeScreen() {
               autoCapitalize="characters"
             />
           </Animatable.View>
-          {where && (
+          {destination && (
             <AppButton icon="map" title="Carte" onPress={() => goToMap()} />
           )}
           {audioUri !== "" && (

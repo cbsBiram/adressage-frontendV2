@@ -1,20 +1,16 @@
-import "react-native-gesture-handler";
 import React from "react";
-// import { ActivityIndicator } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import Home from "./app/views/Home";
 
-const Stack = createStackNavigator();
+import AppNavigator from "./app/navigation/AppNavigator";
+import logger from "./app/utility/logger";
+import navigationTheme from "./app/navigation/navigationTheme";
 
-export default class App extends React.Component {
-  render() {
-    return (
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" headerMode="none">
-          <Stack.Screen name="Home" component={Home} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
+logger.start();
+
+export default function App() {
+  return (
+    <NavigationContainer theme={navigationTheme}>
+      <AppNavigator />
+    </NavigationContainer>
+  );
 }

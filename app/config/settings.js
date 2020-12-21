@@ -2,7 +2,7 @@ import Constants from 'expo-constants';
 
 const settings = {
     dev: {
-        apiUrl: 'http://192.168.0.10:8000/api'
+        apiUrl: 'https://adressage-backend.herokuapp.com/api'
     },
     staging: {
         apiUrl: 'https://adressage-backend.herokuapp.com/api'

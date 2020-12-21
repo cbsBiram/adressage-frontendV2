@@ -16,7 +16,6 @@ import addressesApi from "./../api/adress";
 import AppActivityIndicator from "../components/AppActivityIndicator";
 import AppButton from "../components/AppButton";
 import colors from "../config/colors";
-import Header from "../sections/Header";
 import Playlist from "../components/Playlist";
 import routes from "../navigation/routes";
 import useLocation from "../hooks/useLocation";
@@ -27,12 +26,13 @@ export default function HomeScreen() {
   const codeInfoApi = useApi(addressesApi.getCodeInfos);
   navigation = useNavigation();
 
+  const [code, setCode] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [destination, setDestination] = useState();
   const [audioUri, setAudioUri] = useState("");
 
-  // code = DAK-PA-HGY-1093B
-  const updateSearch = async (code) => {
+  // code = DAK-PA-HGY-331E
+  const updateSearch = async () => {
     const response = await codeInfoApi.request(code);
     if (!response.ok) {
       Toast.show(
@@ -42,11 +42,20 @@ export default function HomeScreen() {
       return;
     }
     const { latitude, longitude, uri } = response.data;
-    setDestination({ latitude: latitude, longitude: longitude });
+    if (latitude && longitude)
+      setDestination({ latitude: latitude, longitude: longitude });
+    else {
+      Toast.show(
+        "Ce code n'est pas répertorié dans la base de donnée!",
+        Toast.LONG
+      );
+      return;
+    }
     if (uri) setAudioUri(uri);
   };
 
   const goToMap = () => {
+    console.info("Destination", destination);
     if (destination)
       navigation.navigate(routes.MAP, {
         origin,
@@ -56,12 +65,13 @@ export default function HomeScreen() {
   };
 
   if (!origin) return <AppActivityIndicator visible={true} />;
+  console.log("Code", code);
 
   return (
     <>
       <AppActivityIndicator visible={codeInfoApi.loading} />
       <View style={styles.container}>
-        <Header />
+        {/* <Header /> */}
         <ImageBackground
           style={styles.image}
           source={require("./../assets/road2.webp")}
@@ -74,13 +84,19 @@ export default function HomeScreen() {
             <Ionicons name="ios-search" size={24} color="black" />
             <TextInput
               clearButtonMode="while-editing"
-              placeholder="Search"
-              returnKeyType="search"
-              onSubmitEditing={(e) => updateSearch(e.nativeEvent.text)}
+              placeholder="Entrer le code"
+              onEndEditing={(e) => setCode(e.nativeEvent.text)}
               style={styles.searchInput}
               autoCapitalize="characters"
             />
           </Animatable.View>
+          {code && (
+            <AppButton
+              icon="account-search"
+              title="Trouver"
+              onPress={() => updateSearch()}
+            />
+          )}
           {destination && (
             <AppButton icon="map" title="Carte" onPress={() => goToMap()} />
           )}

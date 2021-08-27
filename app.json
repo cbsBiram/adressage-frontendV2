@@ -29,15 +29,10 @@
         },
         "description": "A platform for searching a specific location previously coded with Myhali.",
         "extra": {
-            "bugsnag": {
-                "apiKey": "854915189891d33e72e7cc1fcf78dd0a"
-            }
+            
         },
         "hooks": {
-            "postPublish": [{
-                "file": "@bugsnag/expo/hooks/post-publish.js",
-                "config": {}
-            }]
+            "postPublish": []
         }
     }
 }

@@ -65,7 +65,6 @@ export default function HomeScreen() {
   };
 
   if (!origin) return <AppActivityIndicator visible={true} />;
-  console.log("Code", code);
 
   return (
     <>
